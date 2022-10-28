@@ -1,25 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import { useState } from 'react';
+import { Todo } from './Todo';
+import { TodoType } from './Types/TodoType';
+import { Text } from './Text';
+import { UserProfile } from './UserProfile';
+import { UserProfileType } from './Types/UserProfileType';
+
+const user: UserProfileType = {
+  name: 'test',
+  hobbies: ['映画', '読書']
+}
 
 function App() {
+  const [todos, setTodos] = useState<Array<TodoType>>([])
+  const onClickGetchData = () => {
+    axios.get<Array<TodoType>>("https://jsonplaceholder.typicode.com/todos").then((result) => {
+      setTodos(result.data)
+    })
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <UserProfile user={user} />
+      <Text color='red' fontSize='36px' ></Text>
+      <button onClick={onClickGetchData}>データ取得</button>
+      {
+        todos.map((todo) => (
+          <Todo key={todo.id} title={todo.title} userId={todo.userId} completed={todo.completed}></Todo>
+        ))
+      }
+    </div >
   );
 }
 
